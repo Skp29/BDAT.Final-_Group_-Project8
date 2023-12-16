@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>News Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        .container {
+            width: 80%;  /* Adjusted width for better visibility */
+            margin: 20px auto;
+            background: #fff;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 40px;
+        }
+        canvas {
+            margin-bottom: 30px;
+        }
+    </style>    
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="#">News Dashboard</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="comparisonchart">Comparison Chart</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="piechart">Pie Chart</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="scatterplot">Scatter Plot</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="dashboard">Dashboard</a>
+                </li>
+                
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Container for Chart -->
+    <div class="container">
+        <h1>News Dashboard</h1>
+        <div>
+            <canvas id="comparisonChart"></canvas>
+        </div>
+    </div>
+
+    <script>
+        // Fetch the news data from the server
+        fetch('/api/news')
+        .then(response => response.json())
+        .then(articles => {
+            // Existing code for other charts...
+
+            // Code for comparison chart
+            // Example: Comparing the number of articles from different sources
+            const sourceCounts = articles.reduce((acc, article) => {
+                const sourceName = article.source.name;
+                acc[sourceName] = (acc[sourceName] || 0) + 1;
+                return acc;
+            }, {});
+
+            const comparisonChart = new Chart(document.getElementById('comparisonChart'), {
+                type: 'bar',  // or 'line' for line chart comparison
+                data: {
+                    labels: Object.keys(sourceCounts),
+                    datasets: [{
+                        label: 'Number of Articles by Source',
+                        data: Object.values(sourceCounts),
+                        backgroundColor: [
+                            '#4bc0c0', '#ff6384', '#36a2eb', '#cc65fe', '#ffce56', '#c9cbcf'
+                            // Add more colors for diversity
+                        ],
+                        borderColor: '#ddd',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: true
+                            }
+                        }]
+                    }
+                }
+            });
+        })
+        .catch(error => console.error('Error fetching data:', error));
+    </script>
+
+    <!--  JavaScript for Bootstrap -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>News Dashboard</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        .container {
+            width: 40%;
+            margin: 20px auto;
+        }
+        .chart-container {
+            margin-bottom: 30px;
+        }
+    </style>    
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="#">News Dashboard</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="comparisonchart">Comparison Chart</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="piechart">Pie Chart</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="scatterplot">Scatter Plot</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="dashboard">Dashboard</a>
+                </li>
+             </ul>
+        </div>
+    </nav>
+
+    <!-- Content -->
+    <div class="container">
+        <h1 class="text-center mt-4">News Dashboard</h1>
+        
+        <div class="chart-container">
+            <canvas id="articlesPieChart"></canvas>
+        </div>
+
+        <!-- Additional charts can be added here -->
+
+    </div>
+
+    <!-- Bootstrap JS, Popper.js, and jQuery -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    
+    <script>
+        // Fetch the news data from the server
+        fetch('/api/news')
+        .then(response => response.json())
+        .then(articles => {
+            // Existing code for bar and line charts...
+
+            // Additional code for pie chart
+            // You can modify the data processing part as per your requirement
+            const pieChartData = articles.reduce((acc, article) => {
+                const sourceName = article.source.name;
+                acc[sourceName] = (acc[sourceName] || 0) + 1;
+                return acc;
+            }, {});
+
+            const pieChart = new Chart(document.getElementById('articlesPieChart'), {
+                type: 'pie',
+                data: {
+                    labels: Object.keys(pieChartData),
+                    datasets: [{
+                        label: 'Article Count',
+                        data: Object.values(pieChartData),
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.5)',
+                            'rgba(54, 162, 235, 0.5)',
+                            'rgba(255, 206, 86, 0.5)',
+                            'rgba(75, 192, 192, 0.5)',
+                            'rgba(153, 102, 255, 0.5)',
+                            'rgba(255, 159, 64, 0.5)'
+                            // Add more colors if you have many categories
+                        ]
+                    }]
+                }
+            });
+        })
+        .catch(error => console.error('Error fetching data:', error));
+
+</script>
+</body>
+</html>

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>News Dashboard</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        .container {
+            width: 40%;
+            margin: 0 auto;
+        }
+    </style>    
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="#">News Dashboard</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="comparisonchart">Comparison Chart</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="piechart">Pie Chart</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="scatterplot">Scatter Plot</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="dashboard">Dashboard</a>
+                </li>
+                
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Content -->
+    <div class="container">
+        <h1>News Dashboard</h1>
+        <div>
+            <canvas id="scatterplot"></canvas>
+        </div>
+    </div>
+
+    <script>
+        // Fetch the news data from the server
+        fetch('/api/news')
+        .then(response => response.json())
+        .then(articles => {
+            // Existing code for bar and line charts...
+
+            // Code for scatter plot
+             const scatterData = articles.map(article => {
+                return {
+                    x: new Date(article.publishedAt),
+                    y: article.content ? article.content.length : 0,
+                    publisher: article.source.name // Get publisher's name
+                };
+            });
+
+            const scatterChart = new Chart(document.getElementById('scatterplot'), {
+                type: 'scatter',
+                data: {
+                    datasets: [{
+                        label: 'Article Length Over Time',
+                        data: scatterData,
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)'
+                    }]
+                },
+                options: {
+                    scales: {
+                        xAxes: [{
+                            type: 'time',
+                            position: 'bottom'
+                        }],
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: true
+                            }
+                        }]
+                    }
+                }
+            });
+        })
+        .catch(error => console.error('Error fetching data:', error));
+    </script>
+
+</body>
+</html>
